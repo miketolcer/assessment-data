@@ -1,3 +1,16 @@
+require('dotenv').config()
+const {CONNECTION_STRING} = process.env
+const { INTEGER } = require('sequelize')
+const Sequelize = require('sequelize')
+
+const sequelize = new Sequelize(CONNECTION_STRING, {
+    dialect: 'postgres',
+    dialectOptions: {
+        ssl: {
+            rejectUnauthorized: false
+        }
+    }
+})
 
 
 module.exports = {
@@ -11,7 +24,14 @@ module.exports = {
                 name varchar
             );
 
-            *****YOUR CODE HERE*****
+                create table cities (
+                    city_id serial primary key,
+                    name varchar,
+                    rating integer,
+                    country_id integer
+                
+            );
+        
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -213,5 +233,44 @@ module.exports = {
             console.log('DB seeded!')
             res.sendStatus(200)
         }).catch(err => console.log('error seeding DB', err))
+    },
+
+    getCountries: (req,res) => {
+        sequelize.query(`select * from countries`)
+        .then(dbRes => res.status(200).send(dbRes[0]))
+        .catch(err => console.log(err))
+
+    },
+
+    createCity: (req,res) => {
+        let {name, rating, countryId} = req.body
+
+        sequelize.query(`insert into countries where country_id = ${countryId};
+            
+        insert into countries (country_id, name)
+        values (${name},${rating},${country_id})
+        `)
+            .then(dbRes => {
+                res.status(200).send(dbRes[0])
+            })
+            .catch(err => console.log(err))
+    
+    },
+
+    getCities: (req,res) => {
+        sequelize.query(`select a.city_id, a.country_id,
+         from cities
+         join countries
+         on country_id = contries.country_id
+          `)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
+    },
+    
+    getcities: (req,res) => {
+        let id = req.params.city_id
+        sequelize.query(`delete ${city_id} from cities table `)
+            .then(dbRes => res.status(200).send(dbRes[0]))
+            .catch(err => console.log(err))
     }
 }
