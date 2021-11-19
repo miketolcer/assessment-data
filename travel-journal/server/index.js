@@ -20,4 +20,3 @@ app.post('/seed', seed)
  app.delete('/cities/:id', deleteCity)
 
 app.listen(SERVER_PORT, () => console.log(`up on ${SERVER_PORT}`))
-ghjhgj
